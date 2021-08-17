@@ -1,0 +1,16 @@
+.App {
+	font-family: sans-serif;
+	text-align: left;
+}
+.task-list {
+	flex-grow: 1;
+	min-height: 400px;
+}
+body {
+	background: #000;
+	color: #fff;
+}
+
+p {
+	margin-left: 2rem;
+}
