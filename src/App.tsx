@@ -17,16 +17,25 @@ const ColumnContainer = styled.div`
 
 const Title = styled.h1`
   text-transform: uppercase;
-  font-size: 4rem;
+  font-size: 3rem;
   margin-bottom: 0;
   margin-left: 2rem;
   margin-top: 2rem;
-  @media screen and ${breakpoint.device.xs} {
-  }
   @media screen and ${breakpoint.device.sm} {
+    font-size: 4rem;
   }
   @media screen and ${breakpoint.device.md} {
+    font-size: 5rem;
   }
+`;
+
+const Form = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+const ButtonHolder = styled.div`
+  flex-direction: row;
 `;
 
 const NewTaskField = styled.input`
@@ -34,7 +43,7 @@ const NewTaskField = styled.input`
   color: #fff;
   border: 0;
   border-bottom: 5px solid #fff;
-  font-size: 3rem;
+  font-size: 2rem;
   margin-left: 2rem;
   width: 80%;
   &:focus {
@@ -43,6 +52,7 @@ const NewTaskField = styled.input`
   @media screen and ${breakpoint.device.xs} {
   }
   @media screen and ${breakpoint.device.sm} {
+    font-size: 2.5rem;
   }
   @media screen and ${breakpoint.device.md} {
   }
@@ -51,12 +61,17 @@ const NewTaskField = styled.input`
 const TaskButton = styled.button`
   background: #000;
   color: #fff;
-  font-size: 3rem;
+  font-size: 2rem;
   border: 5px #fff solid;
   margin-left: 2rem;
+  margin-top: 1rem;
   text-transform: uppercase;
   padding: 0.5rem;
+  display: inline-block;
   @media screen and ${breakpoint.device.sm} {
+    font-size: 2.5rem;
+  }
+  @media screen and ${breakpoint.device.md} {
   }
 `;
 
@@ -226,18 +241,20 @@ export default function App() {
           })}
         </DragDropContext>
       </ColumnContainer>
-      <form onSubmit={handleAdd}>
+      <Form onSubmit={handleAdd}>
         <NewTaskField
           type="text"
           placeholder="new task"
           value={taskToAdd}
           onChange={handleChange}
         />
-        <TaskButton type="submit">Add</TaskButton>
-        <TaskButton onClick={handleClear} type="button">
-          Clear
-        </TaskButton>
-      </form>
+        <ButtonHolder>
+          <TaskButton type="submit">Add</TaskButton>
+          <TaskButton onClick={handleClear} type="button">
+            Clear
+          </TaskButton>
+        </ButtonHolder>
+      </Form>
     </div>
   );
 }

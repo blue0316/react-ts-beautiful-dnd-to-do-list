@@ -24,15 +24,14 @@ const ColumnContainer = styled.div`
 
 const Title = styled.h2`
   text-transform: uppercase;
-  font-size: 3rem;
+  font-size: 2.25rem;
   margin-bottom: 0;
   margin-left: 2rem;
   margin-top: 2rem;
-  @media screen and ${breakpoint.device.xs} {
-  }
   @media screen and ${breakpoint.device.sm} {
+    font-size: 3rem;
   }
-  @media screen and ${breakpoint.device.sm} {
+  @media screen and ${breakpoint.device.md} {
   }
 `;
 
