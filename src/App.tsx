@@ -84,8 +84,8 @@ export default function App() {
     create(data: TaskType) {
       return http.post('/tasks/create');
     }
-    update(id: string, data: TaskType[]) {
-      return http.patch(`/tasks/update/${id}`);
+    update(id: string, data: TaskType) {
+      return http.patch(`/tasks/update/${id}`, data);
     }
     delete(id: string) {
       return http.delete(`/tasks/delete/${id}`);
@@ -124,8 +124,11 @@ export default function App() {
     }
   }
 
+  let taskService = new TaskDataService();
+  let columnService = new ColumnDataService();
+  let columnOrderService = new ColumnOrderDataService();
+
   useEffect(() => {
-    let taskService = new TaskDataService();
     let tasksToLoad: { [id: string]: TaskType } = {};
     taskService
       .getAll()
@@ -140,7 +143,6 @@ export default function App() {
       })
       .catch((err) => console.log(err));
 
-    let columnService = new ColumnDataService();
     let columnsToLoad: { [id: string]: ColumnType } = {};
 
     columnService
@@ -160,7 +162,6 @@ export default function App() {
         console.log(err);
       });
 
-    let columnOrderService = new ColumnOrderDataService();
     let columnOrderToLoad: string[];
 
     columnOrderService
@@ -187,7 +188,8 @@ export default function App() {
       ...state.tasks[id],
       done: !state.tasks[id].done,
     };
-    console.log(`clicked ${newTask._id}`);
+    taskService.update(id, newTask);
+    console.log(newTask);
     const newState: AppData = {
       ...state,
       tasks: { ...state.tasks, [newTask._id]: newTask },
@@ -312,8 +314,8 @@ export default function App() {
         }
       }
 
-      let taskService = new TaskDataService();
-      let columnService = new ColumnDataService();
+      //      let taskService = new TaskDataService();
+      //      let columnService = new ColumnDataService();
       for (let i = 0; i < tasksToRemove.length; i++) {
         taskService.delete(tasksToRemove[i]);
         columnService.removeTask(tasksToRemove[i]);
@@ -342,7 +344,6 @@ export default function App() {
             const tasks: TaskType[] = column.taskIds.map(
               (taskId) => state.tasks[taskId]
             );
-            console.log(tasks);
             return (
               <Column
                 key={column._id}
