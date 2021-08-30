@@ -1,34 +1,34 @@
 export type TaskType = Readonly<{
-  id: string;
+  _id: string;
   text: string;
   done: boolean;
 }>;
 
 export type ColumnType = Readonly<{
-  id: string;
+  _id: string;
   title: string;
   taskIds: string[];
 }>;
 
 export interface AppData {
-  tasks: { [id: string]: TaskType };
-  columns: { [id: string]: ColumnType };
+  tasks: { [_id: string]: TaskType };
+  columns: { [_id: string]: ColumnType };
   columnOrder: string[];
 }
 
 const initialData: AppData = {
   tasks: {
-    'task-1': { id: 'task-1', text: 'walk the dog', done: false },
-    'task-2': { id: 'task-2', text: 'brush teeth', done: false },
+    'task-1': { _id: 'task-1', text: 'walk the dog', done: false },
+    'task-2': { _id: 'task-2', text: 'brush teeth', done: false },
   },
   columns: {
     'column-1': {
-      id: 'column-1',
+      _id: 'column-1',
       title: 'Home',
       taskIds: ['task-1', 'task-2'],
     },
     'column-2': {
-      id: 'column-2',
+      _id: 'column-2',
       title: 'Out',
       taskIds: [],
     },

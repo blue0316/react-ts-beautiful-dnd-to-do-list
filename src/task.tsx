@@ -57,7 +57,7 @@ const TaskText = styled.span<{ done: boolean }>`
 
 const Task = (props: TaskProps) => {
   return (
-    <Draggable draggableId={props.task.id} index={props.index}>
+    <Draggable draggableId={props.task._id} index={props.index}>
       {(provided, snapshot) => (
         <TaskContainer
           {...provided.draggableProps}
@@ -66,7 +66,7 @@ const Task = (props: TaskProps) => {
           isDragging={snapshot.isDragging}
         >
           <li>
-            <TaskButton onClick={() => props.toggleDone(props.task.id)}>
+            <TaskButton onClick={() => props.toggleDone(props.task._id)}>
               {props.task.done
                 ? String.fromCharCode(0x25a0)
                 : String.fromCharCode(0x25a1)}

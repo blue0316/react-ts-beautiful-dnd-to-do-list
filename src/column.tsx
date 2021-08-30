@@ -41,12 +41,12 @@ const Column = (props: ColumnProps) => {
   return (
     <ColumnContainer>
       <Title>{props.column.title}</Title>
-      <Droppable droppableId={props.column.id}>
+      <Droppable droppableId={props.column._id}>
         {(provided: DroppableProvided, snapshot) => (
           <TaskList ref={provided.innerRef} {...provided.droppableProps}>
             {props.tasks.map((task, index) => (
               <Task
-                key={task.id}
+                key={task._id}
                 task={task}
                 index={index}
                 toggleDone={props.toggleDone}
