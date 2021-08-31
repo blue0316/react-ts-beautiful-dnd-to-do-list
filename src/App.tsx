@@ -81,8 +81,8 @@ export default function App() {
     getAll() {
       return http.get<TaskType[]>('/tasks');
     }
-    create(data: TaskType) {
-      return http.post('/tasks/create');
+    create(data: { text: string }) {
+      return http.post('/tasks/create', data);
     }
     update(id: string, data: TaskType) {
       return http.patch(`/tasks/update/${id}`, data);
@@ -98,8 +98,8 @@ export default function App() {
     create(data: ColumnType) {
       return http.post('/columns/create');
     }
-    update(id: string, data: ColumnType[]) {
-      return http.patch(`/columns/update/${id}`);
+    update(id: string, data: ColumnType) {
+      return http.patch(`/columns/update/${id}`, data);
     }
     removeTask(id: string) {
       return http.patch(`/columns/remove-task/${id}`);
@@ -181,7 +181,7 @@ export default function App() {
   }, []);
 
   const [state, setState] = useState(initialData);
-  const [taskToAdd, setTaskToAdd] = useState('');
+  const [taskToAddText, setTaskToAdd] = useState('');
 
   const toggleDone = (id: string): void => {
     const newTask: TaskType = {
@@ -219,7 +219,7 @@ export default function App() {
       newTaskIds.splice(destination.index, 0, draggableId);
 
       const newColumn: ColumnType = { ...start, taskIds: newTaskIds };
-
+      columnService.update(newColumn._id, newColumn);
       let newState: AppData = {
         ...state,
         columns: { ...state.columns, [newColumn._id]: newColumn },
@@ -234,6 +234,9 @@ export default function App() {
       const finishTaskIds: string[] = Array.from(finish.taskIds);
       finishTaskIds.splice(destination.index, 0, draggableId);
       const finishColumn: ColumnType = { ...finish, taskIds: finishTaskIds };
+
+      columnService.update(startColumn._id, startColumn);
+      columnService.update(finishColumn._id, finishColumn);
 
       let newState: AppData = {
         ...state,
@@ -258,31 +261,50 @@ export default function App() {
 
   function handleAdd(event: React.FormEvent<HTMLFormElement>): void {
     event.preventDefault();
-    const newTasks = {
-      ...state.tasks,
-      [taskToAdd]: { _id: taskToAdd, text: taskToAdd, done: false },
-    };
 
-    const start: ColumnType = state.columns['column-1'];
-    let newTaskIds: string[] = Array.from(start.taskIds);
-    newTaskIds = newTaskIds.concat(taskToAdd);
+    taskService
+      .create({ text: taskToAddText })
+      .then((res) => {
+        console.log(res.data.newTask._id);
 
-    const newColumn: ColumnType = { ...start, taskIds: newTaskIds };
+        let newTask: TaskType = res.data.newTask;
+        const newTasks = {
+          ...state.tasks,
+          [newTask._id]: {
+            _id: newTask._id,
+            text: newTask.text,
+            done: newTask.done,
+          },
+        };
 
-    const newColumns = {
-      ...state.columns,
-      'column-1': newColumn,
-    };
+        const start: ColumnType = state.columns[state.columnOrder[0]];
+        let newTaskIds: string[] = Array.from(start.taskIds);
+        newTaskIds = newTaskIds.concat(newTask._id);
 
-    const newState: AppData = {
-      ...state,
-      tasks: newTasks,
-      columns: newColumns,
-    };
+        const newColumn: ColumnType = { ...start, taskIds: newTaskIds };
 
-    setState(newState);
-    setTaskToAdd('');
+        columnService.update(newColumn._id, newColumn);
+
+        const newColumns = {
+          ...state.columns,
+          [newColumn._id]: newColumn,
+        };
+
+        const newState: AppData = {
+          ...state,
+          tasks: newTasks,
+          columns: newColumns,
+        };
+
+        setState(newState);
+        setTaskToAdd('');
+      })
+      .catch((err) => {
+        console.log(`error: ${err}`);
+        setTaskToAdd('');
+      });
   }
+
   function handleClear(): void {
     let keys: string[] = Object.keys(state.tasks);
     let clearedTaskList: { [id: string]: TaskType } = {};
@@ -359,7 +381,7 @@ export default function App() {
         <NewTaskField
           type="text"
           placeholder="new task"
-          value={taskToAdd}
+          value={taskToAddText}
           onChange={handleChange}
         />
         <ButtonHolder>
