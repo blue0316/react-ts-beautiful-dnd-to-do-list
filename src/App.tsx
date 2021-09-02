@@ -307,18 +307,18 @@ export default function App() {
 
   function handleClear(): void {
     let keys: string[] = Object.keys(state.tasks);
-    let clearedTaskList: { [id: string]: TaskType } = {};
+    let notDoneTaskList: { [id: string]: TaskType } = {};
     let tasksToRemove: string[] = [];
     keys.forEach((task) => {
       if (state.tasks[task].done === false) {
-        clearedTaskList[task] = { ...state.tasks[task] };
+        notDoneTaskList[task] = { ...state.tasks[task] };
       } else {
         tasksToRemove.push(task);
       }
     });
 
     keys = Object.keys(state.columns);
-    let newColumn: {} = {};
+    let newColumn: ColumnType;
     let newColumns: {} = {};
 
     keys.forEach((index) => {
@@ -334,21 +334,18 @@ export default function App() {
         if (keepTask) {
           newTaskIds.push(taskIds[i]);
         }
+        newColumn = { ...state.columns[index], taskIds: newTaskIds };
+        newColumns = { ...newColumns, [index]: newColumn };
+        columnService.update(index, newColumn);
       }
-
-      //      let taskService = new TaskDataService();
-      //      let columnService = new ColumnDataService();
-      for (let i = 0; i < tasksToRemove.length; i++) {
-        taskService.delete(tasksToRemove[i]);
-        columnService.removeTask(tasksToRemove[i]);
-      }
-
-      newColumn = { ...state.columns[index], taskIds: newTaskIds };
-      newColumns = { ...newColumns, [index]: newColumn };
     });
 
+    for (let i = 0; i < tasksToRemove.length; i++) {
+      taskService.delete(tasksToRemove[i]);
+    }
+
     let newAppData: AppData = {
-      tasks: clearedTaskList,
+      tasks: notDoneTaskList,
       columns: newColumns,
       columnOrder: [...state.columnOrder],
     };
